@@ -1,13 +1,14 @@
 import React, { Fragment, useState } from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { setAlert } from '../../actions/alert';
+import { register } from '../../actions/auth';
 import PropTypes from 'prop-types';
 
 // import axios from 'axios';
 
 // can directly pull out setAlert from props like this below
-const Register = ({ setAlert }) => {
+const Register = ({ setAlert, register, isAuthenticated }) => {
   // Since we have a form here - we need a component state, because each input needs to have its on state and onChange handler to update the state
 
   const [formData, setFormData] = useState({
@@ -27,30 +28,13 @@ const Register = ({ setAlert }) => {
     if (password !== password2) {
       setAlert('Passwords do not match', 'danger');
     } else {
-      console.log('success');
-      // Want to put this logic into a redux action instead of in the component
-      // const newUser = {
-      //   name,
-      //   email,
-      //   password,
-      // };
-
-      // try {
-      //   const config = {
-      //     headers: {
-      //       'Content-Type': 'application/json',
-      //     },
-      //   };
-
-      //   const body = JSON.stringify(newUser);
-
-      //   const res = await axios.post('/api/users', body, config);
-      //   console.log(res.data);
-      // } catch (err) {
-      //   console.log(err.response.data);
-      // }
+      register({ name, email, password });
     }
   };
+
+  if (isAuthenticated) {
+    return <Redirect to='/dashboard' />;
+  }
 
   return (
     <Fragment>
@@ -66,7 +50,7 @@ const Register = ({ setAlert }) => {
             name='name'
             value={name}
             onChange={(e) => onChange(e)}
-            required
+            // required
           />
         </div>
         <div className='form-group'>
@@ -76,7 +60,7 @@ const Register = ({ setAlert }) => {
             name='email'
             value={email}
             onChange={(e) => onChange(e)}
-            required
+            // required
           />
           <small className='form-text'>
             This site uses Gravatar so if you want a profile image, use a
@@ -91,7 +75,7 @@ const Register = ({ setAlert }) => {
             minLength='6'
             value={password}
             onChange={(e) => onChange(e)}
-            required
+            // required
           />
         </div>
         <div className='form-group'>
@@ -102,7 +86,7 @@ const Register = ({ setAlert }) => {
             minLength='6'
             value={password2}
             onChange={(e) => onChange(e)}
-            required
+            // required
           />
         </div>
         <input type='submit' className='btn btn-primary' value='Register' />
@@ -116,8 +100,14 @@ const Register = ({ setAlert }) => {
 
 Register.propTypes = {
   setAlert: PropTypes.func.isRequired,
+  register: PropTypes.func.isRequired,
+  isAuthenticated: PropTypes.bool,
 };
+
+const mapStateToProps = (state) => ({
+  isAuthenticated: state.auth.isAuthenticated,
+});
 
 // have to pass in the action into connect whenever we want to use it
 
-export default connect(null, { setAlert })(Register);
+export default connect(mapStateToProps, { setAlert, register })(Register);
