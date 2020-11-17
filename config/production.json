@@ -1,0 +1,5 @@
+{
+  "mongoURI": "mongodb+srv://prit123:prit123@devconnector.pfsum.mongodb.net/devconnector?retryWrites=true&w=majority",
+  "jwtSecret": "secrettoken",
+  "githubToken": "7c1a3f6789b56c344052203f048e8a8a98adde46"
+}
